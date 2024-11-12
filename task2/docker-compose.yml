@@ -1,0 +1,58 @@
+version: "3.7"
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql
+    restart: unless-stopped
+    cap_add:
+      - SYS_NICE
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydatabase
+    volumes:
+      - db_data_volume:/root
+    networks:
+      my_network:
+        ipv4_address: 172.18.0.4
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3306" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  consumer:
+    container_name: consumer
+    image: consumer
+    command: nohup java -cp /ISD_3rd_LAB_BIT/task2/Consumer:/ISD_3rd_LAB_BIT/task2/Consumer/mysql-connector-java-8.0.30.jar Main &
+    restart: unless-stopped
+    networks:
+      my_network:
+        ipv4_address: 172.18.0.2
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  producer:
+    container_name: producer
+    image: producer
+    command: nohup java -jar Producer.jar &
+    restart: unless-stopped
+    networks:
+      my_network:
+        ipv4_address: 172.18.0.3
+    depends_on:
+      - consumer
+
+networks:
+  my_network:
+    driver: bridge
+    name: my_network
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+
+volumes:
+  db_data_volume:
+    name: db_data_volume
+    driver: local

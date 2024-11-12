@@ -1,0 +1,4 @@
+FROM mysql
+
+COPY ./my.cnf /etc/mysql/mariadb.conf.d/custom.cnf
+COPY ./mysqlscript.sql /docker-entrypoint-initdb.d/script.sql
