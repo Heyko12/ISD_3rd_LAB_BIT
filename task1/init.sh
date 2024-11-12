@@ -1,7 +1,7 @@
 #!/bin/bash
 
 docker rm $(docker ps -a -q)
-docker build -t task1 .
+docker build --no-cache -t task1 .
 
 #docker tag task1 heyko12/task1
 #docker login
