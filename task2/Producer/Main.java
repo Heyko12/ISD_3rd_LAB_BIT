@@ -1,16 +1,17 @@
 /* Простой продьюсер, генерит случайного пользователя со своим именем и паролем, 
  * полученный объект шлет в консьюмер
  */
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.net.Socket;
 import java.util.*;
 import java.io.*;
 
 public class Main {
     public static void main(String[] args) {
-        String serverAddress = "localhost";
+        String serverAddress = "172.18.0.2";
         int serverPort = 8097;
         String filePath = "file.txt";
-        System.out.println("Producer started");
 
         while(true) {
             try (Socket socket = new Socket(serverAddress, serverPort)) {
